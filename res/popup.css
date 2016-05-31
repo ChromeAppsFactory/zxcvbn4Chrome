@@ -1,0 +1,41 @@
+body {
+    background-color: #ffffff;
+    font-family: arial, sans-serif;
+    -webkit-user-select: none;
+}
+.container {
+    padding: 5px;
+    width: 250px;
+    font-family: arial;
+    line-height: 17px;
+    font-size: 13px;
+    color: #333;
+}
+
+.heading {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.gotitdiv {
+    text-align: right;
+}
+
+.gotitbutton {
+    font-weight: bold;
+    cursor:pointer
+}
+
+.noticepart {
+    margin-bottom: 5px;
+}
+
+.strengthText {
+    padding-bottom: 5px;
+    font-family: "arial";
+}
+
+.feedback {
+    padding-top: 5px;
+    font-family: "arial";
+}

@@ -1,0 +1,9 @@
+.meterContainer {
+  border: 1px solid #ccc;
+  width: 250px;
+  height: 5px;
+}
+
+.meter {
+  height: 5px;
+}
