@@ -16,12 +16,12 @@
   }
   function _listenRequests(request, sender, sendResponse) {
     if (request.action === 'getPassword') {
-      var message = getPasswordFromDOM();
+      var message = _getPasswordFromDOM();
       sendResponse(message);
     }
   }
 
-  function getPasswordFromDOM() {
+  function _getPasswordFromDOM() {
     var allPasswordFields = document.querySelectorAll('[type="password"]')
     if (allPasswordFields.length === 0) {//page has no password fields
       return {

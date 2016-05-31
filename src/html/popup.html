@@ -1,15 +1,50 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
 <head>
-    <link href="../../res/meter.css" rel="stylesheet">
-    <link href="../../res/popup.css" rel="stylesheet">
-    <script src="../js/popup/popup.js"></script>
-    <script src="../js/popup/installNotice.js"></script>
-    <script src="../js/popup/popupLoader.js"></script>
-    <script src="../js/third_party/zxcvbn/zxcvbn.js"></script>
-    <script src="../js/popup/meter.js"></script>
+  <link href="../../res/meter.css" rel="stylesheet">
+  <link href="../../res/popup.css" rel="stylesheet">
+  <script src="../js/popup/popup.js"></script>
+  <script src="../js/popup/installNotice.js"></script>
+  <script src="../js/popup/popupLoader.js"></script>
+  <script src="../js/third_party/zxcvbn/zxcvbn.js"></script>
+  <script src="../js/popup/meter.js"></script>
 </head>
 <body>
+  <div class="popup">
+    <div class="header">Estimate strength of your P@ssw0rd</div>
+    <table>
+      <tr>
+        <td>
+          <input id = "pagePassword" type ="radio" name = "passwordChoice" value="" checked />
+        </td>
+        <td>
+          <span>Retrieve password from current page</span>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input id = "userInputPassword" type ="radio" name = "passwordChoice" value=""/>
+        </td>
+        <td>
+          <span>I want to enter password</span>
+        </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>
+          <input id = "userInput" type ="password">
+        </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>
+          <div style="margin-top: 10px">
+            <button id="estimateStrength" class="btn">Estimate Strength</button>
+        </div></td>
+      </tr>
+    </table>
 
+    <div id="feedbackContainer" class="feedbackContainer"></div>
+  </div>
 </body>
 </html>

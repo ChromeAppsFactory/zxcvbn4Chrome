@@ -1,54 +1,104 @@
 function Popup() {
   var _api = {};
-  var _container;
   var _currentTabId;
-  var _noPasswordField = "No password field found on this page.";
-  var _emptyPassword = "The password field on the page is empty.";
+  var _noPasswordFieldError = "No password field found on this page.";
+  var _emptyPasswordError = "The password field on the page is empty.";
+  var _appError = "Application Error: Try refreshing the page.";
+
   var _colors = ["#FF0000", "#FF0000", "#FFB200", "#45cfc9", "#00FF00"];
   var _strengths = ["Very Weak", "Weak", "Fair", "Good", "Strong"];
 
+  var _choicePagePassword = "pagePassword";
+
   _api.create = function() {
-    sendMessageToCS('getPassword', _handleResponse);
-    _container = document.createElement('div');
-    _container.classList.add('container');
-    document.body.appendChild(_container);
+    _addEventListeners();
+  };
+
+  function _addEventListeners() {
+    var estimateStrengthButton = document.getElementById("estimateStrength");
+    estimateStrengthButton.addEventListener("click", _estimatePasswordStrength);
+
+    var userInputPassword = document.getElementById('userInputPassword');
+    userInputPassword.addEventListener('click', _enableUserInputPassword);
+
+    var userInput = document.getElementById('userInput');
+    userInput.addEventListener('click', _selectUserInputPasswordChoice);
   }
 
+  function _selectUserInputPasswordChoice() {
+    var userInputPassword = document.getElementById('userInputPassword');
+    userInputPassword.checked = true;
+  }
+
+  function _enableUserInputPassword() {
+    var userInput = document.getElementById('userInput');
+    userInput.removeAttribute("disabled");
+    userInput.focus();
+  }
+  function _estimatePasswordStrength() {
+    _separateFeedbackUI ();
+    var choice = _getChoice();
+    if (choice === _choicePagePassword) {
+      sendMessageToCS('getPassword', _handleResponse);
+    } else {
+      var userInput = document.getElementById('userInput').value;
+      if (userInput.length > 0) {
+        _handleResponse({password: userInput});
+      } else {
+        _handleResponse({error: "empty"});
+      }
+    }
+  }
+  function _separateFeedbackUI () {
+    var feedbackContainer = document.getElementById('feedbackContainer');
+    feedbackContainer.style.paddingTop = "15px";
+  }
+  function _getChoice() {
+    return document.querySelectorAll("input[type=radio]:checked")[0].id;
+  }
   function _handleResponse(response) {
+    _clearFeedbackArea();
     if (response) {
       if (response.error) {
         if (response.error === "noPasswordField") {
-          displayError(_noPasswordField)
+          _displayError(_noPasswordFieldError)
         } else if (response.error === "empty") {
-          displayError(_emptyPassword);
+          _displayError(_emptyPasswordError);
         }
       } else if (response.password) {
-        var estimate = zxcvbn(response.password);
-        displayStrengthText(_strengths[estimate.score]);
-        var score = estimate.score === 0 ? 0.25 : estimate.score;
-        createMeter(score, _colors[estimate.score]);
-        var feedback = getFeedbackText(estimate.feedback);
-        displayFeedback(feedback);
+        _displayPasswordStrength(response.password);
       }
     } else {
-      _container.innerText = "Application Error: Try refreshing the page."
+      _displayError(_appError);
     }
   }
 
-  function getFeedbackText(feedback) {
+  function _clearFeedbackArea() {
+    var feedbackContainer = document.getElementById('feedbackContainer');
+    feedbackContainer.innerHTML = "";
+  }
+  function _displayPasswordStrength(password) {
+    var estimate = zxcvbn(password);
+    _displayStrengthText(_strengths[estimate.score]);
+    var score = estimate.score === 0 ? 0.25 : estimate.score;
+    _createMeter(score, _colors[estimate.score]);
+    var feedback = _getFeedbackText(estimate.feedback);
+    _displayFeedback(feedback);
+  }
+  function _getFeedbackText(feedback) {
     var feedbackText = "";
-    feedbackText = appendString(feedbackText, feedback.warning);
+    feedbackText = _appendString(feedbackText, feedback.warning);
     var suggestions = feedback.suggestions;
     if (suggestions) {
       for (var i = 0; i < suggestions.length; i++) {
         feedbackText += ' ';
-        feedbackText = appendString(feedbackText, suggestions[i]);
+        feedbackText = _appendString(feedbackText, suggestions[i]);
       }
     }
     return feedbackText;
   }
 
-  function appendString(text, textTobeAdded) {
+  function _appendString(text, textTobeAdded) {
     if (textTobeAdded) {
       text += textTobeAdded
       if (!text.endsWith('.')) {
@@ -58,29 +108,34 @@ function Popup() {
     return text;
   }
 
-  function displayError(errorText) {
+  function _displayError(errorText) {
     var errorContainer = document.createElement('div');
+    errorContainer.classList.add('error');
     errorContainer.innerText = errorText;
-    _container.appendChild(errorContainer);
+    var feedbackContainer = document.getElementById('feedbackContainer');
+    feedbackContainer.appendChild(errorContainer);
   }
-  function displayStrengthText(strength) {
+  function _displayStrengthText(strength) {
     var strengthDiv = document.createElement('div');
     strengthDiv.classList.add('strengthText');
-    _container.appendChild(strengthDiv);
+    var feedbackContainer = document.getElementById('feedbackContainer');
+    feedbackContainer.appendChild(strengthDiv);
     strengthDiv.innerHTML = '<span style="font-weight: bold">Password Strength: </span>' + strength;
   }
-  function createMeter(value, color) {
+  function _createMeter(value, color) {
     var meter = new Meter(4);
-    meter.appendElementTo(_container);
+    var feedbackContainer = document.getElementById('feedbackContainer');
+    meter.appendElementTo(feedbackContainer);
     meter.setValue(value);
     meter.setColor(color);
   }
 
-  function displayFeedback(feedback) {
+  function _displayFeedback(feedback) {
     var feedbackDiv = document.createElement('div');
     feedbackDiv.classList.add('feedback');
     feedbackDiv.innerText = feedback;
-    _container.appendChild(feedbackDiv);
+    var feedbackContainer = document.getElementById('feedbackContainer');
+    feedbackContainer.appendChild(feedbackDiv);
   }
   function sendMessageToCS(message, callback) {
     var tabsQueryData = {
@@ -98,11 +153,10 @@ function Popup() {
 
   }
 
-  function sendMessageTo(tabId, message, callback) {
+  function sendMessageTo(tabId, action, callback) {
     var message = {
-      "action": message
+      "action": action
     };
-
     chrome.tabs.sendMessage(tabId, message, undefined, function(response) {
       if (callback) {
         callback(response);

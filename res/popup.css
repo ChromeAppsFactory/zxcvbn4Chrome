@@ -3,10 +3,19 @@ body {
     font-family: arial, sans-serif;
     -webkit-user-select: none;
 }
-.container {
-    padding: 5px;
+
+.popup {
+    width: 280px;
+    padding: 15px;
+}
+.feedbackContainer {
+    line-height: 17px;
+    font-size: 13px;
+    color: #333;
+}
+
+.instalNotice {
     width: 250px;
-    font-family: arial;
     line-height: 17px;
     font-size: 13px;
     color: #333;
@@ -32,10 +41,32 @@ body {
 
 .strengthText {
     padding-bottom: 5px;
-    font-family: "arial";
 }
 
 .feedback {
     padding-top: 5px;
-    font-family: "arial";
+}
+
+.error {
+    color: red;
+    padding-left: 10px;
+}
+
+.header {
+    margin-bottom: 5px;
+    font-size: 17px;
+}
+
+.btn {
+    padding-left: 10px;
+    padding-right: 10px;
+    font-weight: bold;
+}
+
+.btn:hover {
+    background-color: #e7ecf0;
+    background-image: linear-gradient(to bottom, #e7ecf0, #b6b9ba);
+    text-decoration: none;
+    outline: none;
+    cursor: pointer;
 }

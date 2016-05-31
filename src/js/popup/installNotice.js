@@ -12,27 +12,28 @@ function InstallNotice(installOrUpdate) {
     }
   }
   _api.create = function() {
+    document.body.innerHTML = "";
     var noticeContainer = document.createElement('div');
-    noticeContainer.classList.add('container');
+    noticeContainer.classList.add('instalNotice');
     if (installOrUpdate == 'install') {
-      noticeContainer.appendChild(createHeading(notice.install.heading));
-      noticeContainer.appendChild(createNoticeDiv(notice.install.text));
+      noticeContainer.appendChild(_createHeading(notice.install.heading));
+      noticeContainer.appendChild(_createNoticeDiv(notice.install.text));
     } else {
-      noticeContainer.appendChild(createHeading(notice.update.heading));
-      noticeContainer.appendChild(createNoticeDiv(notice.update.text));
+      noticeContainer.appendChild(_createHeading(notice.update.heading));
+      noticeContainer.appendChild(_createNoticeDiv(notice.update.text));
     }
-    noticeContainer.appendChild(createGotItButton());
+    noticeContainer.appendChild(_createGotItButton());
     document.body.appendChild(noticeContainer);
   };
 
-  function createHeading(heading) {
+  function _createHeading(heading) {
     var headingDiv = document.createElement('div');
     headingDiv.classList.add('heading');
     headingDiv.innerText = heading;
     return headingDiv;
   }
 
-  function createNoticeDiv(noticeParts) {
+  function _createNoticeDiv(noticeParts) {
     var noticeDiv = document.createElement('div');
     for (var i = 0; i < noticeParts.length; i++) {
       var noticePart = document.createElement('div');
@@ -42,7 +43,7 @@ function InstallNotice(installOrUpdate) {
     }
     return noticeDiv;
   }
-  function createGotItButton() {
+  function _createGotItButton() {
     var gotItButtonDiv = document.createElement('div');
     gotItButtonDiv.classList.add('gotitdiv');
     var gotItButton = document.createElement('button');
