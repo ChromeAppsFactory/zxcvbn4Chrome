@@ -3,9 +3,20 @@
 
   "name": "zxcvbn4Chrome - Password Strength Estimator",
   "description": "Estimate strength of your password",
-  "version": "0.5",
+  "version": "1.0",
+
+  "icons": {
+    "16": "res/16.png",
+    "128": "res/128.png"
+  },
+
+
 
   "browser_action": {
+    "default_icon": {
+      "19": "res/19.png",
+      "38": "res/38.png"
+    },
     "default_popup": "src/html/popup.html",
     "default_title": "zxcvbn4Chrome - Password Strength Estimator"
   },
