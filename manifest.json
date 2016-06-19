@@ -19,19 +19,5 @@
     },
     "default_popup": "src/html/popup.html",
     "default_title": "zxcvbn4Chrome - Password Strength Estimator"
-  },
-
-  "background": {
-    "scripts": [
-      "src/js/bp/background.js"]
-  },
-
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-        "js": [
-        "src/js/cs/csRequestHandler.js"
-        ]
-    }
-  ]
+  }
 }

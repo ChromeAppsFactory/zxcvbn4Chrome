@@ -2,13 +2,11 @@ function Popup() {
   var _api = {};
   var _currentTabId;
   var _noPasswordFieldError = "No password field found on this page.";
-  var _emptyPasswordError = "The password field on the page is empty.";
+  var _emptyPasswordError = "No Password entered.";
   var _appError = "Application Error: Try refreshing the page.";
 
   var _colors = ["#FF0000", "#FF0000", "#FFB200", "#45cfc9", "#00FF00"];
   var _strengths = ["Very Weak", "Weak", "Fair", "Good", "Strong"];
-
-  var _choicePagePassword = "pagePassword";
 
   _api.create = function() {
     _addEventListeners();
@@ -17,45 +15,23 @@ function Popup() {
   function _addEventListeners() {
     var estimateStrengthButton = document.getElementById("estimateStrength");
     estimateStrengthButton.addEventListener("click", _estimatePasswordStrength);
-
-    var userInputPassword = document.getElementById('userInputPassword');
-    userInputPassword.addEventListener('click', _enableUserInputPassword);
-
-    var userInput = document.getElementById('userInput');
-    userInput.addEventListener('click', _selectUserInputPasswordChoice);
   }
 
-  function _selectUserInputPasswordChoice() {
-    var userInputPassword = document.getElementById('userInputPassword');
-    userInputPassword.checked = true;
-  }
-
-  function _enableUserInputPassword() {
-    var userInput = document.getElementById('userInput');
-    userInput.removeAttribute("disabled");
-    userInput.focus();
-  }
   function _estimatePasswordStrength() {
     _separateFeedbackUI ();
-    var choice = _getChoice();
-    if (choice === _choicePagePassword) {
-      sendMessageToCS('getPassword', _handleResponse);
+    var userInput = document.getElementById('userInput').value;
+    if (userInput.length > 0) {
+      _handleResponse({password: userInput});
     } else {
-      var userInput = document.getElementById('userInput').value;
-      if (userInput.length > 0) {
-        _handleResponse({password: userInput});
-      } else {
-        _handleResponse({error: "empty"});
-      }
+      _handleResponse({error: "empty"});
     }
+
   }
   function _separateFeedbackUI () {
     var feedbackContainer = document.getElementById('feedbackContainer');
     feedbackContainer.style.paddingTop = "15px";
   }
-  function _getChoice() {
-    return document.querySelectorAll("input[type=radio]:checked")[0].id;
-  }
+
   function _handleResponse(response) {
     _clearFeedbackArea();
     if (response) {
@@ -137,33 +113,6 @@ function Popup() {
     var feedbackContainer = document.getElementById('feedbackContainer');
     feedbackContainer.appendChild(feedbackDiv);
   }
-  function sendMessageToCS(message, callback) {
-    var tabsQueryData = {
-      active: true,
-      currentWindow: true
-    };
-    if (_currentTabId) {
-        sendMessageTo(_currentTabId, message, callback)
-    } else {
-        chrome.tabs.query(tabsQueryData, function (tabs) {
-            _currentTabId = tabs[0].id;
-            sendMessageTo(_currentTabId, message, callback)
-        });
-    }
-
-  }
-
-  function sendMessageTo(tabId, action, callback) {
-    var message = {
-      "action": action
-    };
-    chrome.tabs.sendMessage(tabId, message, undefined, function(response) {
-      if (callback) {
-        callback(response);
-      }
-    });
-  }
-
   return _api;
 }
 
