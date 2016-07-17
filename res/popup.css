@@ -62,6 +62,9 @@ body {
     padding-right: 10px;
     font-weight: bold;
 }
+.btnContainer {
+    margin-top: 15px;
+}
 
 .btn:hover {
     background-color: #e7ecf0;

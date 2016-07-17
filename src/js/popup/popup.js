@@ -1,9 +1,6 @@
 function Popup() {
   var _api = {};
-  var _currentTabId;
-  var _noPasswordFieldError = "No password field found on this page.";
   var _emptyPasswordError = "No Password entered.";
-  var _appError = "Application Error: Try refreshing the page.";
 
   var _colors = ["#FF0000", "#FF0000", "#FFB200", "#45cfc9", "#00FF00"];
   var _strengths = ["Very Weak", "Weak", "Fair", "Good", "Strong"];
@@ -33,9 +30,9 @@ function Popup() {
     _separateFeedbackUI ();
     var userInput = document.getElementById('userInput').value;
     if (userInput.length > 0) {
-      _handleResponse({password: userInput});
+      _handleUserInput({password: userInput});
     } else {
-      _handleResponse({error: "empty"});
+      _handleUserInput({error: "empty"});
     }
     focusPasswordField();
   }
@@ -44,20 +41,14 @@ function Popup() {
     feedbackContainer.style.paddingTop = "15px";
   }
 
-  function _handleResponse(response) {
+  function _handleUserInput(input) {
     _clearFeedbackArea();
-    if (response) {
-      if (response.error) {
-        if (response.error === "noPasswordField") {
-          _displayError(_noPasswordFieldError)
-        } else if (response.error === "empty") {
-          _displayError(_emptyPasswordError);
-        }
-      } else if (response.password) {
-        determinePasswordStrength(response.password)
-      }
-    } else {
-      _displayError(_appError);
+
+    if (input.error === "empty") {
+      _displayError(_emptyPasswordError);
+    }
+    else if (input.password) {
+      determinePasswordStrength(input.password)
     }
   }
 
@@ -99,7 +90,7 @@ function Popup() {
       }
     }
     if (sequence && score < 4) {
-      for (var i = 0; i < sequence.length; i++) {
+      for (i = 0; i < sequence.length; i++) {
         if (sequence[i].dictionary_name === 'user_inputs') {
           feedbackText += ' ';
           feedbackText = _appendString(feedbackText, _personalInfoWarning);
