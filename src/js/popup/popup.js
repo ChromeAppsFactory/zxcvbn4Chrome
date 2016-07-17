@@ -7,14 +7,26 @@ function Popup() {
 
   var _colors = ["#FF0000", "#FF0000", "#FFB200", "#45cfc9", "#00FF00"];
   var _strengths = ["Very Weak", "Weak", "Fair", "Good", "Strong"];
+  var _personalInfoWarning = "Do not use personal information in the password.";
 
   _api.create = function() {
+    focusPasswordField();
     _addEventListeners();
   };
 
+  function focusPasswordField() {
+    document.getElementById('userInput').focus();
+  }
   function _addEventListeners() {
     var estimateStrengthButton = document.getElementById("estimateStrength");
     estimateStrengthButton.addEventListener("click", _estimatePasswordStrength);
+
+    var optionsAnchor = document.getElementById("options");
+    optionsAnchor.addEventListener('click', _openOptionsPage);
+  }
+
+  function _openOptionsPage() {
+    chrome.runtime.openOptionsPage(function () {});
   }
 
   function _estimatePasswordStrength() {
@@ -25,7 +37,7 @@ function Popup() {
     } else {
       _handleResponse({error: "empty"});
     }
-
+    focusPasswordField();
   }
   function _separateFeedbackUI () {
     var feedbackContainer = document.getElementById('feedbackContainer');
@@ -42,26 +54,41 @@ function Popup() {
           _displayError(_emptyPasswordError);
         }
       } else if (response.password) {
-        _displayPasswordStrength(response.password);
+        determinePasswordStrength(response.password)
       }
     } else {
       _displayError(_appError);
     }
   }
 
+  function determinePasswordStrength(password) {
+    BaseOptionsHandler().getOptions(function(options) {
+      var rawUserInputs = Object.keys(options).map(function (key) {return options[key].split(" ")});
+      var userInputs = [];
+      rawUserInputs.forEach(function(input) {
+        input.forEach(function(entry) {
+          if (entry && entry.trim().length > 0) {
+            userInputs.push(entry.trim());
+          }
+        })
+      });
+      _displayPasswordStrength(password, userInputs);
+    });
+  }
+
   function _clearFeedbackArea() {
     var feedbackContainer = document.getElementById('feedbackContainer');
     feedbackContainer.innerHTML = "";
   }
-  function _displayPasswordStrength(password) {
-    var estimate = zxcvbn(password);
+  function _displayPasswordStrength(password, userDictionary) {
+    var estimate = zxcvbn(password, userDictionary);
     _displayStrengthText(_strengths[estimate.score]);
     var score = estimate.score === 0 ? 0.25 : estimate.score;
     _createMeter(score, _colors[estimate.score]);
-    var feedback = _getFeedbackText(estimate.feedback);
+    var feedback = _getFeedbackText(estimate.feedback, estimate.sequence, score);
     _displayFeedback(feedback);
   }
-  function _getFeedbackText(feedback) {
+  function _getFeedbackText(feedback, sequence, score) {
     var feedbackText = "";
     feedbackText = _appendString(feedbackText, feedback.warning);
     var suggestions = feedback.suggestions;
@@ -69,6 +96,15 @@ function Popup() {
       for (var i = 0; i < suggestions.length; i++) {
         feedbackText += ' ';
         feedbackText = _appendString(feedbackText, suggestions[i]);
+      }
+    }
+    if (sequence && score < 4) {
+      for (var i = 0; i < sequence.length; i++) {
+        if (sequence[i].dictionary_name === 'user_inputs') {
+          feedbackText += ' ';
+          feedbackText = _appendString(feedbackText, _personalInfoWarning);
+          break;
+        }
       }
     }
     return feedbackText;

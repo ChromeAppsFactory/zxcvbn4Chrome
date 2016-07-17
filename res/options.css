@@ -1,0 +1,49 @@
+body {
+    font-family: arial
+}
+
+.optionsContainer {
+    margin-left: auto;
+    margin-right: auto;
+    width: 700px;
+}
+
+.tableBorders {
+    order-collapse:separate;
+    border-spacing:15px;
+}
+
+.logo {
+    width: 64px;
+    height: 64px;
+}
+
+.extName {
+    font-size: 20px
+}
+
+.notice {
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.info {
+    font-size: 12px;
+    color: gray;
+}
+
+.separator {
+    border-bottom: 1px solid lightgray;
+}
+
+.actionButtons {
+    width: 80px;
+    font-weight: bold
+}
+
+.optionsSaved {
+    color: red;
+    font-size: 16px;
+    font-weight: bold;
+    display: none;
+}
